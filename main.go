@@ -137,7 +137,7 @@ func (p *parser) pushToToken(tokenType, value string) {
 //CheckName checks for keywords name
 func (p *parser) CheckName() bool {
 	//Check for name token
-	LETTER := regexp.MustCompile(`[A-Za-z0-9]`)
+	LETTER := regexp.MustCompile(`^[\w&.-]+$`)
 	if LETTER.Match([]byte(p.currentChar)) {
 		value := ""
 
@@ -275,6 +275,6 @@ func main() {
 	d.GenerateProtoDetails(tokens)
 
 	jsonRep ,_:= json.Marshal(d)
-	fmt.Println(string(jsonRep))
+	fmt.Println(string(jsonRep), tokens)
 
 }
