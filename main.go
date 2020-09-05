@@ -31,7 +31,7 @@ const (
 
 )
 
-type serviceDetails struct {
+type protoDetails struct {
 	Package string
 	ProtoVersion string
 	Service string
@@ -244,24 +244,24 @@ func (p *parser) CheckString() bool {
 GenerateProtoDetails takes in a custom proto tokens gotten form the parser and extracts the necessary details of the proto file.
 It Returns details like the proto syntax version, the package name, the service name and all methods under the service.
 */
-func (s *serviceDetails) GenerateProtoDetails(tokens []token, ) {
+func (d *protoDetails) GenerateProtoDetails(tokens []token, ) {
 	for index, token := range tokens {
 
 		//check for package token and move to the next node
 		if token.value == "package" {
-			s.Package = tokens[index+1].value
+			d.Package = tokens[index+1].value
 		}
 
 		//checks for proto syntax version
 		// syntax = "proto3";
 		if token.value == "syntax"  && tokens[index+1].tokenType == TOKENTYPEQUATOR.String() {
-			s.ProtoVersion = tokens[index+2].value
+			d.ProtoVersion = tokens[index+2].value
 		}
 
 		//check for service name
 		//service Greeter {
 		if token.value == "service" && tokens[index+1].tokenType == TOKENTYPENAME.String() && tokens[index+2].tokenType==TOKENTYPEOPENCURLY.String() {
-			s.Service = tokens[index+1].value
+			d.Service = tokens[index+1].value
 		}
 	}
 
@@ -271,10 +271,10 @@ func main() {
 	tokens := p.tokens
 
 	//Generate
-	s := &serviceDetails{}
-	s.GenerateProtoDetails(tokens)
+	d := &protoDetails{}
+	d.GenerateProtoDetails(tokens)
 
-	jsonRep ,_:= json.Marshal(s)
+	jsonRep ,_:= json.Marshal(d)
 	fmt.Println(string(jsonRep))
 
 }
