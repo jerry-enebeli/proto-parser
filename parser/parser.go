@@ -2,7 +2,6 @@ package parser
 
 import (
 	"io/ioutil"
-	"log"
 	"regexp"
 )
 
@@ -53,7 +52,7 @@ func (p Parser) getNext() string {
 	return string(p.fileAttr[p.current+1])
 }
 
-func NewParser(protoFile string) *Parser {
+func NewParser(protoFile string) (*Parser, error) {
 	p := &Parser{
 		File:        "",
 		current:     0,
@@ -62,7 +61,11 @@ func NewParser(protoFile string) *Parser {
 		Tokens:      nil,
 	}
 
-	p.readFile(protoFile)
+	err := p.readFile(protoFile)
+
+	if err != nil {
+		return nil, err
+	}
 
 	//read each char till the end of File
 	for p.current < p.totalChars {
@@ -100,21 +103,23 @@ func NewParser(protoFile string) *Parser {
 		break
 	}
 
-	return p
+	return p,nil
 }
 
 //read proto File
-func (p *Parser) readFile(file string) {
+func (p *Parser) readFile(file string) error {
 	data, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	p.File = string(data) + "\n"
 	p.fileAttr = []rune(p.File)
 	p.currentChar = string(p.fileAttr[p.current])
 	p.totalChars = len(p.File)
+
+	return err
 }
 
 func (p *Parser) pushToToken(tokenType, value string) {
